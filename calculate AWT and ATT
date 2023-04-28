@@ -1,0 +1,81 @@
+#include <stdio.h>
+
+int main() {
+    // Define the list of processes and their burst times
+    char* processes[] = {"P1", "P2", "P3", "P4"};
+    int burst_times[] = {6, 8, 7, 3};
+    
+    // Calculate the number of processes
+    int n = sizeof(processes) / sizeof(processes[0]);
+    
+    // Create a list to store the completion times of the processes
+    int completion_times[n];
+    
+    // Create a list to store the waiting times of the processes
+    int waiting_times[n];
+    
+    // Create a list to store the turnaround times of the processes
+    int turnaround_times[n];
+    
+    // Sort the processes by their burst times in ascending order
+    int sorted_processes[n];
+    for (int i = 0; i < n; i++) {
+        sorted_processes[i] = i;
+    }
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (burst_times[sorted_processes[i]] > burst_times[sorted_processes[j]]) {
+                int temp = sorted_processes[i];
+                sorted_processes[i] = sorted_processes[j];
+                sorted_processes[j] = temp;
+            }
+        }
+    }
+    
+    // Calculate the completion times for each process
+    int current_time = 0;
+    for (int i = 0; i < n; i++) {
+        int index = sorted_processes[i];
+        completion_times[index] = current_time + burst_times[index];
+        current_time = completion_times[index];
+    }
+    
+    // Calculate the waiting times and turnaround times for each process
+    for (int i = 0; i < n; i++) {
+        waiting_times[i] = completion_times[i] - burst_times[i];
+        turnaround_times[i] = completion_times[i];
+    }
+    
+    // Calculate the average waiting time and average turnaround time
+    float avg_waiting_time = 0;
+    float avg_turnaround_time = 0;
+    for (int i = 0; i < n; i++) {
+        avg_waiting_time += waiting_times[i];
+        avg_turnaround_time += turnaround_times[i];
+    }
+    avg_waiting_time /= n;
+    avg_turnaround_time /= n;
+    
+    // Print the results
+    printf("Non-Preemptive Shortest-Job-First Scheduling\n");
+    printf("Process\tBurst Time\tCompletion Time\tWaiting Time\tTurnaround Time\n");
+    for (int i = 0; i < n; i++) {
+        printf("%s\t%d\t\t%d\t\t%d\t\t%d\n", processes[i], burst_times[i], completion_times[i], waiting_times[i], turnaround_times[i]);
+    }
+    printf("Average Waiting Time: %.2f\n", avg_waiting_time);
+    printf("Average Turnaround Time: %.2f\n", avg_turnaround_time);
+    
+    return 0;
+}
+
+OUTPUT:
+
+/tmp/8Y0KgCBJyo.o
+Non-Preemptive Shortest-Job-First Scheduling
+Process	Burst Time	Completion Time	Waiting Time	Turnaround Time
+P1	6		9		3		9
+P2	8		24		16		24
+P3	7		16		9		16
+P4	3		3		0		3
+Average Waiting Time: 7.00
+Average Turnaround Time: 13.00
