@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define NUM_PARTITIONS 6
+#define NUM_PROCESSES 5
+
+// function to allocate memory block using best-fit algorithm
+void best_fit(int partitions[], int processes[], int allocation[]) {
+    // initialize allocation array with -1 (indicating unallocated)
+    for (int i = 0; i < NUM_PROCESSES; i++) {
+        allocation[i] = -1;
+    }
+
+    // iterate over each process
+    for (int i = 0; i < NUM_PROCESSES; i++) {
+        int best_index = -1; // initialize best fit index to -1
+        for (int j = 0; j < NUM_PARTITIONS; j++) {
+            if (partitions[j] >= processes[i]) { // if partition size is >= process size
+                if (best_index == -1 || partitions[j] < partitions[best_index]) { // if first fit or better fit
+                    best_index = j; // update best fit index
+                }
+            }
+        }
+        if (best_index != -1) { // if best fit found
+            allocation[i] = best_index; // allocate process to partition
+            partitions[best_index] -= processes[i]; // reduce partition size by process size
+        }
+    }
+}
+
+// function to print the allocation status of each process
+void print_allocation(int processes[], int allocation[]) {
+    printf("\nProcess No.\tProcess Size\tPartition No.\n");
+    for (int i = 0; i < NUM_PROCESSES; i++) {
+        printf("   %d\t\t   %d KB\t\t", i+1, processes[i]);
+        if (allocation[i] != -1) {
+            printf("%d\n", allocation[i]+1);
+        } else {
+            printf("Not Allocated\n");
+        }
+    }
+}
+
+int main() {
+    int partitions[NUM_PARTITIONS] = { 300, 600, 350, 200, 750, 125 };
+    int processes[NUM_PROCESSES] = { 115, 500, 358, 200, 375 };
+    int allocation[NUM_PROCESSES];
+
+    best_fit(partitions, processes, allocation);
+    print_allocation(processes, allocation);
+
+    return 0;
+}
+
