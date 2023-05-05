@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_FILES 100
+
+typedef struct {
+    char name[50];
+} File;
+
+typedef struct {
+    char name[50];
+    File files[MAX_FILES];
+    int num_files;
+} Directory;
+
+// function to create a new directory
+Directory create_directory(char* name) {
+    Directory dir;
+    strcpy(dir.name, name);
+    dir.num_files = 0;
+    return dir;
+}
+
+// function to add a new file to a directory
+void add_file(Directory* dir, char* name) {
+    if (dir->num_files >= MAX_FILES) {
+        printf("Cannot add file, directory is full.\n");
+        return;
+    }
+    strcpy(dir->files[dir->num_files].name, name);
+    dir->num_files++;
+}
+
+// function to print the contents of a directory
+void print_directory(Directory dir) {
+    printf("Directory Name: %s\n", dir.name);
+    printf("Files:\n");
+    for (int i = 0; i < dir.num_files; i++) {
+        printf(" - %s\n", dir.files[i].name);
+    }
+}
+
+int main() {
+    Directory cse = create_directory("CSE");
+
+    add_file(&cse, "A");
+    add_file(&cse, "B");
+    add_file(&cse, "C");
+
+    print_directory(cse);
+
+    return 0;
+}
