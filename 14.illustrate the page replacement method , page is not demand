@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_FRAMES 10
+
+int main() {
+    int page_faults = 0, num_frames = 3, time = 0;
+    int frames[MAX_FRAMES], page_refs[] = {7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1};
+    int num_refs = sizeof(page_refs) / sizeof(int);
+    int next_use[MAX_FRAMES] = {0};
+
+    for (int i = 0; i < num_refs; i++) {
+        int page = page_refs[i];
+
+        // check if page is already in a frame
+        int found = 0;
+        for (int j = 0; j < num_frames; j++) {
+            if (frames[j] == page) {
+                found = 1;
+                next_use[j] = i + 1;
+                break;
+            }
+        }
+
+        // if page is not in a frame, replace page with longest next use time
+        if (!found) {
+            int oldest_page = 0;
+            for (int j = 1; j < num_frames; j++) {
+                if (next_use[j] < next_use[oldest_page]) {
+                    oldest_page = j;
+                }
+            }
+            frames[oldest_page] = page;
+            next_use[oldest_page] = i + 1;
+            page_faults++;
+        }
+
+        printf("Page reference: %d  Frames: ", page);
+        for (int j = 0; j < num_frames; j++) {
+            if (frames[j] != -1) {
+                printf("%d ", frames[j]);
+            } else {
+                printf("- ");
+            }
+        }
+        printf("\n");
+    }
+
+    printf("\nTotal Page Faults: %d\n", page_faults);
+
+    return 0;
+}
