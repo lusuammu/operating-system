@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h>
+
+// define shared memory variable
+int shared_data = 5;
+
+// define semaphore
+sem_t semaphore;
+
+// thread function to double shared data
+void* double_shared_data(void* arg) {
+    // wait for semaphore
+    sem_wait(&semaphore);
+
+    // read shared data
+    int data = shared_data;
+
+    // double the data
+    data = data * 2;
+
+    // print the doubled data
+    printf("Doubled data: %d\n", data);
+
+    // write back to shared data
+    shared_data = data;
+
+    // signal semaphore
+    sem_post(&semaphore);
+
+    // exit thread
+    pthread_exit(NULL);
+}
+
+// thread function to print five times shared data
+void* five_times_shared_data(void* arg) {
+    // wait for semaphore
+    sem_wait(&semaphore);
+
+    // read shared data
+    int data = shared_data;
+
+    // multiply the data by 5
+    data = data * 5;
+
+    // print the five times data
+    printf("Five times data: %d\n", data);
+
+    // write back to shared data
+    shared_data = data;
+
+    // signal semaphore
+    sem_post(&semaphore);
+
+    // exit thread
+    pthread_exit(NULL);
+}
+
+int main() {
+    // initialize semaphore
+    sem_init(&semaphore, 0, 1);
+
+    // create threads
+    pthread_t thread1, thread2;
+    pthread_create(&thread1, NULL, double_shared_data, NULL);
+    pthread_create(&thread2, NULL, five_times_shared_data, NULL);
+
+    // wait for threads to finish
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+
+    // destroy semaphore
+    sem_destroy(&semaphore);
+
+    // exit program
+    return 0;
+}
