@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_TRACKS 100
+
+int main() {
+    int tracks[MAX_TRACKS], n, head, i, j, total_movement = 0;
+    bool direction; // true for moving up, false for moving down
+    
+    // input the number of tracks and their positions
+    printf("Enter the number of tracks: ");
+    scanf("%d", &n);
+    printf("Enter the track positions: ");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &tracks[i]);
+    }
+    
+    // input the starting head position
+    printf("Enter the head position: ");
+    scanf("%d", &head);
+    
+    // input the direction of movement
+    printf("Enter the direction of movement (0 for down, 1 for up): ");
+    scanf("%d", &direction);
+    
+    // sort the tracks in ascending order
+    for (i = 0; i < n; i++) {
+        for (j = i+1; j < n; j++) {
+            if (tracks[i] > tracks[j]) {
+                int temp = tracks[i];
+                tracks[i] = tracks[j];
+                tracks[j] = temp;
+            }
+        }
+    }
+    
+    // find the index of the starting track
+    int start_index = 0;
+    while (start_index < n && tracks[start_index] < head) {
+        start_index++;
+    }
+    
+    // move the head in the specified direction and calculate total movement
+    if (direction) { // move up
+        for (i = start_index; i < n; i++) {
+            total_movement += abs(tracks[i] - head);
+            head = tracks[i];
+        }
+        for (i = n-2; i >= 0; i--) {
+            total_movement += abs(tracks[i] - head);
+            head = tracks[i];
+        }
+    } else { // move down
+        for (i = start_index-1; i >= 0; i--) {
+            total_movement += abs(tracks[i] - head);
+            head = tracks[i];
+        }
+        for (i = 1; i < n; i++) {
+            total_movement += abs(tracks[i] - head);
+            head = tracks[i];
+        }
+    }
+    
+    // output the average head movement
+    float avg_movement = (float)total_movement / n;
+    printf("Average head movement: %.2f\n", avg_movement);
+    
+    return 0;
+}
