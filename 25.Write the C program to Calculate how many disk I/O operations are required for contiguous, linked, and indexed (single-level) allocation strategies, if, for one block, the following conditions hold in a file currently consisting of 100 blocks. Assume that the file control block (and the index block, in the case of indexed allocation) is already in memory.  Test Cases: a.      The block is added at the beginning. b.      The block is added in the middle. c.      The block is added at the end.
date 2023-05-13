@@ -1,0 +1,63 @@
+#include <stdio.h>
+
+#define BLOCK_SIZE 4096 // block size in bytes
+#define FILE_SIZE 100 // number of blocks in file
+
+// calculate the number of disk I/O operations required for contiguous allocation
+int contiguous_allocation(int block_num) {
+    int num_operations = 0;
+    
+    if (block_num == 0) {
+        num_operations = 1; // only need to write the new block
+    } else {
+        num_operations = 2; // need to read and write the previous block and write the new block
+    }
+    
+    return num_operations;
+}
+
+// calculate the number of disk I/O operations required for linked allocation
+int linked_allocation(int block_num) {
+    int num_operations = 0;
+    
+    if (block_num == 0) {
+        num_operations = 1; // only need to write the new block
+    } else {
+        num_operations = 2; // need to read and write the previous block and write the new block
+    }
+    
+    return num_operations;
+}
+
+// calculate the number of disk I/O operations required for indexed allocation
+int indexed_allocation(int block_num) {
+    int num_operations = 0;
+    
+    if (block_num == 0) {
+        num_operations = 1; // only need to write the new block and update the index block
+    } else if (block_num < FILE_SIZE / 2) {
+        num_operations = 2; // need to read and write the index block and write the new block
+    } else {
+        num_operations = 3; // need to read and write the index block, read and write the previous block, and write the new block
+    }
+    
+    return num_operations;
+}
+
+int main() {
+    int block_num;
+    
+    printf("Enter the block number (0-99): ");
+    scanf("%d", &block_num);
+    
+    printf("Contiguous allocation:\n");
+    printf("Adding block at position %d requires %d disk I/O operations.\n", block_num, contiguous_allocation(block_num));
+    
+    printf("Linked allocation:\n");
+    printf("Adding block at position %d requires %d disk I/O operations.\n", block_num, linked_allocation(block_num));
+    
+    printf("Indexed allocation:\n");
+    printf("Adding block at position %d requires %d disk I/O operations.\n", block_num, indexed_allocation(block_num));
+    
+    return 0;
+}
