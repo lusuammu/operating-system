@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdint.h>
+
+#define BLOCK_SIZE 8192 // 8 KB disk blocks
+#define BLOCK_PTR_SIZE 4 // 4-byte block pointers
+
+typedef struct inode {
+    uint16_t mode;
+    uint16_t uid;
+    uint32_t size;
+    uint32_t blocks[15];
+} inode_t;
+
+int main() {
+    uint32_t max_file_size = 0;
+    
+    // calculate the maximum file size for direct blocks
+    uint32_t max_direct_size = 12 * BLOCK_SIZE;
+    max_file_size += max_direct_size;
+    
+    // calculate the maximum file size for single indirect blocks
+    uint32_t single_indirect_ptrs_per_block = BLOCK_SIZE / BLOCK_PTR_SIZE;
+    uint32_t max_single_indirect_blocks = BLOCK_SIZE / BLOCK_PTR_SIZE;
+    uint32_t max_single_indirect_size = max_single_indirect_blocks * BLOCK_SIZE;
+    max_file_size += max_single_indirect_size;
+    
+    // calculate the maximum file size for double indirect blocks
+    uint32_t double_indirect_ptrs_per_block = BLOCK_SIZE / BLOCK_PTR_SIZE;
+    uint32_t max_double_indirect_blocks = single_indirect_ptrs_per_block * max_single_indirect_blocks;
+    uint32_t max_double_indirect_size = max_double_indirect_blocks * BLOCK_SIZE;
+    max_file_size += max_double_indirect_size;
+    
+    // calculate the maximum file size for triple indirect blocks
+    uint32_t triple_indirect_ptrs_per_block = BLOCK_SIZE / BLOCK_PTR_SIZE;
+    uint32_t max_triple_indirect_blocks = double_indirect_ptrs_per_block * max_double_indirect_blocks;
+    uint32_t max_triple_indirect_size = max_triple_indirect_blocks * BLOCK_SIZE;
+    max_file_size += max_triple_indirect_size;
+    
+    printf("Maximum file size: %u bytes\n", max_file_size);
+    
+    return 0;
+}
