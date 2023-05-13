@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_USERS 3
+#define MAX_FILES 2
+
+struct file {
+    char name[20];
+};
+
+struct directory {
+    char name[20];
+    struct file files[MAX_FILES];
+    int num_files;
+};
+
+struct user {
+    char name[20];
+    struct directory dir;
+};
+
+int main() {
+    struct user users[MAX_USERS];
+    int i, j;
+    
+    // create users and directories
+    for (i = 0; i < MAX_USERS; i++) {
+        sprintf(users[i].name, "user%d", i+1);
+        sprintf(users[i].dir.name, "dir%d", i+1);
+        users[i].dir.num_files = 0;
+        printf("Created user %s with directory %s\n", users[i].name, users[i].dir.name);
+    }
+    
+    // create files for each user
+    for (i = 0; i < MAX_USERS; i++) {
+        for (j = 0; j < MAX_FILES; j++) {
+            struct file f;
+            sprintf(f.name, "file%d", j+1);
+            users[i].dir.files[j] = f;
+            users[i].dir.num_files++;
+            printf("Created file %s for user %s in directory %s\n", f.name, users[i].name, users[i].dir.name);
+        }
+    }
+    
+    return 0;
+}
